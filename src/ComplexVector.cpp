@@ -12,7 +12,10 @@ cx_vector::cx_vector(const std::vector<cx>& vec)
 cx_vector::cx_vector(const cx_vector& obj) noexcept
     : arr(obj.arr)
 {
-	this->reset_values();
+	this->__sum__ = obj.__sum__;
+    this->__mean__ = obj.__mean__;
+    this->__max__ = obj.__max__;
+    this->__min__ = obj.__min__;
 }
 
 cx_vector::cx_vector(size_t __size, const cx& val)
@@ -27,10 +30,14 @@ cx_vector::cx_vector(size_t __size, const cx& val)
 cx_vector& cx_vector::operator =(const cx_vector& obj) noexcept
 {
     if (this != &obj)
+    {
         this->arr = obj.arr;
+        this->__sum__ = obj.__sum__;
+        this->__mean__ = obj.__mean__;
+        this->__max__ = obj.__max__;
+        this->__min__ = obj.__min__;
+    }
     return *this;
-
-	this->reset_values();
 }
 
 const cx& cx_vector::operator [](size_t index) const noexcept
@@ -202,3 +209,23 @@ cx_vector cx_vector::projection(const cx_vector& obj) const
     return proj_;
 }
 
+
+cx cx_vector::sum() const noexcept
+{
+    return this->__sum__;
+}
+
+cx cx_vector::mean() const noexcept
+{
+    return this->__mean__;
+}
+
+cx cx_vector::max() const noexcept
+{
+    return this->__max__;
+}
+
+cx cx_vector::min() const noexcept
+{
+    return this->__min__;
+}

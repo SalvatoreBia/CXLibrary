@@ -67,7 +67,7 @@ void cx_vector::reset_values()
         if (val.mod() < __min__.mod())
             __min__ = val;
     }
-    __mean__ = __sum__ / cx(arr.size(), 0); // Calcola la media come somma divisa per la dimensione
+    __mean__ = __sum__ / cx(arr.size(), 0);
 }
 
 #endif
