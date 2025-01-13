@@ -12,7 +12,7 @@ cx_vector::cx_vector(const std::vector<cx>& vec)
 cx_vector::cx_vector(const cx_vector& obj) noexcept
     : arr(obj.arr)
 {
-	this->__sum__ = obj.__sum__;
+    this->__sum__ = obj.__sum__;
     this->__mean__ = obj.__mean__;
     this->__max__ = obj.__max__;
     this->__min__ = obj.__min__;

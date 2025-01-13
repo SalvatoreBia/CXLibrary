@@ -58,7 +58,7 @@ void cx_vector::reset_values()
     __min__ = arr[0];
 
     for (const auto& val : arr) 
-	{
+    {
         __sum__ = __sum__ + val;
 
         if (val.mod() > __max__.mod())
