@@ -5,8 +5,8 @@ cx_vector::cx_vector(const std::vector<cx>& vec)
 {
     if (vec.size() < 2)
         throw std::invalid_argument("cx_vector constructor accepts vector with size greater or equal than 2.");
-	
-	this->reset_values();
+    
+    this->reset_values();
 }
 
 cx_vector::cx_vector(const cx_vector& obj) noexcept
@@ -16,6 +16,7 @@ cx_vector::cx_vector(const cx_vector& obj) noexcept
     this->__mean__ = obj.__mean__;
     this->__max__ = obj.__max__;
     this->__min__ = obj.__min__;
+    this->cache_valid = obj.cache_valid;
 }
 
 cx_vector::cx_vector(size_t __size, const cx& val)
@@ -23,8 +24,8 @@ cx_vector::cx_vector(size_t __size, const cx& val)
 {
     if (__size < 2)
         throw std::invalid_argument("cx_vector constructor accepts vector with size greater or equal than 2.");
-
-	this->reset_values();
+    
+    this->reset_values();
 }
 
 cx_vector& cx_vector::operator =(const cx_vector& obj) noexcept
@@ -36,8 +37,15 @@ cx_vector& cx_vector::operator =(const cx_vector& obj) noexcept
         this->__mean__ = obj.__mean__;
         this->__max__ = obj.__max__;
         this->__min__ = obj.__min__;
+        this->cache_valid = obj.cache_valid;
     }
     return *this;
+}
+
+cx& cx_vector::operator [](size_t index) noexcept
+{
+    this->cache_valid = false;
+    return this->arr[index];
 }
 
 const cx& cx_vector::operator [](size_t index) const noexcept
@@ -56,26 +64,26 @@ const cx& cx_vector::at(size_t index) const
 cx_vector cx_vector::operator +(const cx_vector& obj) const
 {
     if (this->arr.size() != obj.arr.size())
-        throw std::runtime_error("Dimensions don\'t match.");
+        throw std::runtime_error("Dimensions don't match.");
 
     cx_vector sum_(this->arr.size(), cx(0, 0));
     for (size_t i = 0; i < this->arr.size(); i++)
         sum_[i] = (*this)[i] + obj[i];
 
-	sum_.reset_values();
+    sum_.reset_values();
     return sum_;
 }
 
 cx_vector cx_vector::operator -(const cx_vector& obj) const
 {
     if (this->arr.size() != obj.arr.size())
-        throw std::runtime_error("Dimensions don\'t match.");
+        throw std::runtime_error("Dimensions don't match.");
 
     cx_vector sub_(this->arr.size(), cx(0, 0));
     for (size_t i = 0; i < this->arr.size(); i++)
         sub_[i] = (*this)[i] - obj[i];
 
-	sub_.reset_values();
+    sub_.reset_values();
     return sub_;
 }
 
@@ -85,7 +93,7 @@ cx_vector cx_vector::operator *(const cx& val) const noexcept
     for (size_t i = 0; i < prod_.dim(); i++)
         prod_[i] = prod_[i] * val;
 
-	prod_.reset_values();
+    prod_.reset_values();
     return prod_;
 }
 
@@ -134,7 +142,7 @@ void cx_vector::normalize() noexcept
     for (size_t i = 0; i < this->dim(); i++)
         (*this)[i] = (*this)[i] / cx(mag, 0);
 
-	this->reset_values();
+    this->reset_values();
 }
 
 cx_vector cx_vector::cumulative_sum() const noexcept
@@ -146,7 +154,7 @@ cx_vector cx_vector::cumulative_sum() const noexcept
         sum_ = sum_ + (*this)[i];
         cum_[i] = sum_;
     }
-    
+
     cum_.reset_values();
     return cum_;
 }
@@ -157,14 +165,14 @@ cx_vector cx_vector::conjugate() const noexcept
     for (size_t i = 0; i < conj_.dim(); i++)
         conj_[i] = conj_[i].conjugate();
 
-	this->reset_values();
+    conj_.reset_values();
     return conj_;
 }
 
 cx cx_vector::dot(const cx_vector& obj) const
 {
     if (this->dim() != obj.dim())
-        throw std::runtime_error("Dimensions don\'t match.");
+        throw std::runtime_error("Dimensions don't match.");
 
     cx prod_(0, 0);
     for (size_t i = 0; i < this->dim(); i++)
@@ -178,54 +186,67 @@ cx_vector cx_vector::cross(const cx_vector& obj) const
     if (this->dim() != 3 || obj.dim() != 3)
         throw std::runtime_error("Cross product is only defined in 3-Dimensional space.");
 
-	cx_vector cross_ = {
+    cx_vector cross_ = {
         (*this)[1] * obj[2] - (*this)[2] * obj[1],
         (*this)[2] * obj[0] - (*this)[0] * obj[2],
         (*this)[0] * obj[1] - (*this)[1] * obj[0]
     };
-    
-	cross_.reset_values();
-	return cross_;
+
+    cross_.reset_values();
+    return cross_;
 }
 
 cx_vector cx_vector::projection(const cx_vector& obj) const
 {
     if (this->dim() != obj.dim())
-        throw std::runtime_error("Dimensions don\'t match.");
+        throw std::runtime_error("Dimensions don't match.");
 
     cx dot_product = this->dot(obj);
     cx mod_squared = obj.dot(obj);
-
     if (mod_squared.real == 0 && mod_squared.imag == 0)
-        throw std::runtime_error("Can\'t project onto a zero vector.");
+        throw std::runtime_error("Can't project onto a zero vector.");
 
     cx scalar = dot_product / mod_squared;
-
     cx_vector proj_(obj.dim(), cx(0, 0));
     for (size_t i = 0; i < obj.dim(); i++)
         proj_[i] = obj[i] * scalar;
-
-	proj_.reset_values();
+        
+    proj_.reset_values();
     return proj_;
 }
 
-
 cx cx_vector::sum() const noexcept
 {
+    if (!this->cache_valid)
+        const_cast<cx_vector*>(this)->reset_values();
     return this->__sum__;
 }
 
 cx cx_vector::mean() const noexcept
 {
+    if (!this->cache_valid)
+        const_cast<cx_vector*>(this)->reset_values();
     return this->__mean__;
 }
 
 cx cx_vector::max() const noexcept
 {
+    if (!this->cache_valid)
+        const_cast<cx_vector*>(this)->reset_values();
     return this->__max__;
 }
 
 cx cx_vector::min() const noexcept
 {
+    if (!this->cache_valid)
+        const_cast<cx_vector*>(this)->reset_values();
     return this->__min__;
+}
+
+cx_vector cx_vector::null_vector(size_t __size)
+{
+    if (__size < 2)
+        throw std::invalid_argument("cx_vector constructor accepts vector with size greater or equal than 2.");
+    
+    return cx_vector(__size, cx(0, 0));
 }

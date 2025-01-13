@@ -2,24 +2,24 @@
 #include "ComplexNumber.h"
 
 	
-cx::cx(const cx& obj): real(obj.real), imag(obj.imag) { }
+cx::cx(const cx& obj) noexcept : real(obj.real), imag(obj.imag) { }
 
-explicit cx::operator std::pair<float, float>() const noexcept
+cx::operator std::pair<float, float>() const noexcept
 {
     return {real, imag};
 }
 
-cx::operator +(const cx& obj) const noexcept
+cx cx::operator +(const cx& obj) const noexcept
 {
 	return cx(real + obj.real, imag + obj.imag);
 }
 
-cx::operator -(const cx& obj) const noexcept
+cx cx::operator -(const cx& obj) const noexcept
 {
 	return cx(real - obj.real, imag - obj.imag);
 }
 
-cx::operator *(const cx& obj) const noexcept
+cx cx::operator *(const cx& obj) const noexcept
 {
 	return cx(
 		(real * obj.real) - (imag * obj.imag),
@@ -27,7 +27,7 @@ cx::operator *(const cx& obj) const noexcept
 	);
 }
 
-cx::operator /(const cx& obj) const
+cx cx::operator /(const cx& obj) const
 {
 	if (obj.real == 0 && obj.imag == 0)
 		throw std::runtime_error("Division by zero.");
@@ -56,12 +56,12 @@ std::ostream& operator <<(std::ostream& os, const cx& obj)
 
 float cx::mod() const noexcept
 {
-	return std::sqrt(std::pow(real, 2) * std::pow(imag, 2));
+	return std::sqrt(std::pow(real, 2) + std::pow(imag, 2));
 }
 
 float cx::mod2() const noexcept
 {
-	return std::pow(real, 2) * std::pow(imag, 2);
+	return std::pow(real, 2) + std::pow(imag, 2);
 }
 
 float cx::phase() const noexcept
