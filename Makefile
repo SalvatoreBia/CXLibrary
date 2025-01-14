@@ -1,11 +1,14 @@
 CXX = g++
-CXXFLAGS = -std=c++17 -Iinclude -I/usr/include/catch2 -Wall -Wextra -pedantic
+CXXFLAGS = -std=c++17 -Iinclude -Wall -Wextra -pedantic
 SRC_DIR = src
 TESTS_DIR = test
 BIN_DIR = $(TESTS_DIR)/bin
 OBJECTS = $(SRC_DIR)/ComplexNumber.cpp $(SRC_DIR)/ComplexVector.cpp $(SRC_DIR)/ComplexMatrix.cpp $(SRC_DIR)/CXLibrary.cpp
 TESTS = $(wildcard $(TESTS_DIR)/*.cpp)
 EXECUTABLES = $(TESTS:$(TESTS_DIR)/%.cpp=$(BIN_DIR)/%)
+
+CATCH2_PATH = $(shell if [ -d /usr/include/catch2 ]; then echo /usr/include/catch2; else echo /usr/local/include/catch2; fi)
+CXXFLAGS += -I$(CATCH2_PATH)
 
 .PHONY: all clean run-tests
 

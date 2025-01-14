@@ -19,15 +19,8 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y g++ make cmake
-    
-    - name: Install Catch2
-      run: |
-        git clone https://github.com/catchorg/Catch2.git
-        cd Catch2
-        cmake -Bbuild -H. -DBUILD_TESTING=OFF
-        sudo cmake --build build --target install
-        cd ..
+        sudo apt-get install -y g++ make
+        sudo apt-get install -y catch2
 
     - name: Build with make
       run: make
