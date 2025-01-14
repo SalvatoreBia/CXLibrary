@@ -22,4 +22,4 @@ All'interno della cartella del progetto vi è un `Makefile` che permette di comp
 - `make run-tests` per eseguire i test
 - `make clean` per fare pulizia dei binari dei test
 
-==NOTA==: è necessario avere a disposizione la libreria `catch2` per poter eseguire i test.
+**NOTA**: è necessario avere a disposizione la libreria `catch2` per poter eseguire i test.
