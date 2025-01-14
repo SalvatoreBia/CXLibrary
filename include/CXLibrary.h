@@ -3,5 +3,6 @@
 
 #include "ComplexNumber.h"
 #include "ComplexVector.h"
+#include "ComplexMatrix.h"
 
 #endif
