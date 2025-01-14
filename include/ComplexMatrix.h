@@ -22,12 +22,25 @@ public:
 
     cx& operator ()(size_t, size_t) noexcept;
     const cx& operator()(size_t, size_t) const noexcept;
+    cx_vector& operator[](size_t) noexcept;
+    const cx_vector& operator[](size_t) const noexcept;
     cx& at(size_t, size_t);
     const cx& at(size_t, size_t) const;
+
+    cx_matrix& operator =(const cx_matrix&) noexcept;
+    cx_matrix operator +(const cx_matrix&) const;
+    cx_matrix operator -(const cx_matrix&) const;
+    bool operator ==(const cx_matrix&) const noexcept;
+    bool operator !=(const cx_matrix&) const noexcept;
 
     size_t rows() const noexcept;
     size_t cols() const noexcept;
     std::pair<size_t, size_t> dim() const noexcept;
+    cx_vector get_col(size_t) const;
+
+    static cx_matrix get_identity(size_t);
+
+    std::vector<cx_vector> get() noexcept;
 };
 
 

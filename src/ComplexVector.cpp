@@ -1,5 +1,33 @@
 #include "ComplexVector.h"
 
+void cx_vector::reset_values()
+{
+    if (arr.empty()) {
+        __sum__ = cx(0, 0);
+        __mean__ = cx(0, 0);
+        __max__ = cx(0, 0);
+        __min__ = cx(0, 0);
+        cache_valid = true;
+        return;
+    }
+
+    __sum__ = cx(0, 0);
+    __max__ = arr[0];
+    __min__ = arr[0];
+
+    for (const auto& val : arr)
+    {
+        __sum__ = __sum__ + val;
+        if (val.mod() > __max__.mod())
+            __max__ = val;
+        if (val.mod() < __min__.mod())
+            __min__ = val;
+    }
+
+    __mean__ = __sum__ / cx(arr.size(), 0);
+    cache_valid = true;
+}
+
 cx_vector::cx_vector(const std::vector<cx>& vec)
     : arr(vec)
 {
@@ -133,7 +161,7 @@ float cx_vector::mod() const noexcept
     return std::sqrt(sum_);
 }
 
-void cx_vector::normalize() noexcept
+void cx_vector::normalize()
 {
     float mag = this->mod();
     if (mag == 0.0f)
@@ -144,6 +172,7 @@ void cx_vector::normalize() noexcept
 
     this->reset_values();
 }
+
 
 cx_vector cx_vector::cumulative_sum() const noexcept
 {
@@ -186,11 +215,11 @@ cx_vector cx_vector::cross(const cx_vector& obj) const
     if (this->dim() != 3 || obj.dim() != 3)
         throw std::runtime_error("Cross product is only defined in 3-Dimensional space.");
 
-    cx_vector cross_ = {
+    cx_vector cross_ = std::vector<cx>({
         (*this)[1] * obj[2] - (*this)[2] * obj[1],
         (*this)[2] * obj[0] - (*this)[0] * obj[2],
         (*this)[0] * obj[1] - (*this)[1] * obj[0]
-    };
+    });
 
     cross_.reset_values();
     return cross_;
@@ -249,4 +278,9 @@ cx_vector cx_vector::null_vector(size_t __size)
         throw std::invalid_argument("cx_vector constructor accepts vector with size greater or equal than 2.");
     
     return cx_vector(__size, cx(0, 0));
+}
+
+std::vector<cx> cx_vector::get() noexcept
+{
+    return this->arr;
 }
