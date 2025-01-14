@@ -143,6 +143,8 @@ cx cx::from_string(const std::string& __str)
 	}
 	else
 		throw std::invalid_argument("Invalid format for complex number.");
+
+	return new_;
 }
 
 std::pair<float, float> cx::to_polar() const noexcept
