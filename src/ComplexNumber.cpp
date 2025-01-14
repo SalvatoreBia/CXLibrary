@@ -1,7 +1,7 @@
 #include <cmath>
 #include "ComplexNumber.h"
 
-const std::regex cx::__pattern__ = std::regex(R"(^\s*([+-]?\d+(\.\d+)?)?([+-]?\d+(\.\d+)?)?i?\s*$)");
+const std::regex cx::__pattern__ = std::regex(R"(^\s*([+-]?\d+(\.\d+)?)?([+-]\d+(\.\d+)?)i?\s*$)");
 
 
 cx::cx(const cx &obj) noexcept : real(obj.real), imag(obj.imag) {}
@@ -113,40 +113,74 @@ cx cx::from_pair(const std::pair<float, float> &p) noexcept
 	return cx(p.first, p.second);
 }
 
-cx cx::from_string(const std::string& __str)
+static std::string trim(const std::string &s)
 {
-	std::smatch match;
-	cx new_;
-	if (std::regex_match(__str, match, cx::__pattern__))
-	{
-		std::string real_sign = match[1].str(); 
-		std::string real_part = match[2].str(); 
+    auto start = s.find_first_not_of(" \t\n\r\f\v");
+    if (start == std::string::npos)
+        return "";
 
-		std::string imag_sign = match[4].str(); 
-		std::string imag_part = match[5].str(); 
-		std::string imag_unit = match[7].str(); 
-
-		if (!real_part.empty())
-			new_.real = std::stof(real_sign + real_part);
-		else
-			new_.real = 0.0f;
-
-		if (!imag_part.empty() && !imag_unit.empty())
-			new_.imag = std::stof(imag_sign + imag_part);
-		else if (!imag_part.empty() && imag_unit.empty())
-			throw std::invalid_argument("Invalid format: missing 'i' for imaginary part.");
-		else
-			new_.imag = 0.0f;
-
-		if (imag_unit == "i" && imag_part.empty()) 
-			new_.imag = (imag_sign == "-") ? -1.0f : 1.0f;
-	}
-	else
-		throw std::invalid_argument("Invalid format for complex number.");
-
-	return new_;
+    auto end = s.find_last_not_of(" \t\n\r\f\v");
+    return s.substr(start, (end - start + 1));
 }
 
+cx cx::from_string(const std::string& input)
+{
+    std::string str = trim(input);
+    if (str.empty())
+        throw std::invalid_argument("Can't parse an empty or all-whitespace string.");
+    
+    std::size_t splitPos = std::string::npos;
+    for (std::size_t i = 1; i < str.size(); ++i) {
+        if (str[i] == '+' || str[i] == '-') {
+            splitPos = i;
+            break; 
+        }
+    }
+
+    float r  = 0.0;
+    float im = 0.0;
+
+    if (splitPos == std::string::npos)
+    {
+        if (!str.empty() && str.back() == 'i')
+        {
+            std::string body = str.substr(0, str.size() - 1);
+
+            if (body.empty() || body == "+")
+                im = 1.0;
+            else if (body == "-")
+                im = -1.0;
+            else
+                im = std::stod(body);
+            
+            r = 0.0;
+        }
+        else
+        {
+            r = std::stod(str);
+            im = 0.0;
+        }
+    }
+    else
+    {
+        std::string real_str = str.substr(0, splitPos);
+        std::string imag_str = str.substr(splitPos);
+
+        if (imag_str.empty() || imag_str.back() != 'i')
+            throw std::invalid_argument("Invalid complex number format (imag part must end with 'i').");
+
+        imag_str.pop_back();
+
+        if (imag_str == "+" || imag_str == "-")
+            im = (imag_str == "+") ? 1.0 : -1.0;
+        else
+            im = std::stod(imag_str);
+
+        r = std::stod(real_str);
+    }
+
+    return cx(r, im);
+}
 std::pair<float, float> cx::to_polar() const noexcept
 {
 	return {mod(), phase()};

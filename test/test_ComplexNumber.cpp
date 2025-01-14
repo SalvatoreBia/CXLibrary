@@ -218,7 +218,8 @@ TEST_CASE("ComplexNumber stream operator...", "[cx]")
 
 TEST_CASE("ComplexNumber initialization from string...", "[cx]")
 {
-    SECTION("Constructor from string - valid strings") {
+    SECTION("Constructor from string - valid strings") 
+    {
         cx a = cx::from_string("3+4i");
         REQUIRE(a.real == Approx(3.0f));
         REQUIRE(a.imag == Approx(4.0f));
@@ -244,7 +245,8 @@ TEST_CASE("ComplexNumber initialization from string...", "[cx]")
         REQUIRE(f.imag == Approx(2.5f));
     }
 
-    SECTION("Constructor from string - invalid strings") {
+    SECTION("Constructor from string - invalid strings") 
+    {
         REQUIRE_THROWS(cx::from_string(""));
         REQUIRE_THROWS(cx::from_string("abc"));     
         REQUIRE_THROWS(cx::from_string("1 + i"));   
