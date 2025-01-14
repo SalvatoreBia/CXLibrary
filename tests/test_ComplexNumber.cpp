@@ -215,3 +215,40 @@ TEST_CASE("ComplexNumber stream operator...", "[cx]")
         REQUIRE(os.str() == "3");
     }
 }
+
+TEST_CASE("ComplexNumber initialization from string...", "[cx]")
+{
+    SECTION("Constructor from string - valid strings") {
+        cx a = cx::from_string("3+4i");
+        REQUIRE(a.real == Approx(3.0f));
+        REQUIRE(a.imag == Approx(4.0f));
+
+        cx b = cx::from_string("-2-3i");
+        REQUIRE(b.real == Approx(-2.0f));
+        REQUIRE(b.imag == Approx(-3.0f));
+
+        cx c = cx::from_string("5");
+        REQUIRE(c.real == Approx(5.0f));
+        REQUIRE(c.imag == Approx(0.0f));
+
+        cx d = cx::from_string("i");
+        REQUIRE(d.real == Approx(0.0f));
+        REQUIRE(d.imag == Approx(1.0f));
+
+        cx e = cx::from_string("-4i");
+        REQUIRE(e.real == Approx(0.0f));
+        REQUIRE(e.imag == Approx(-4.0f));
+
+        cx f = cx::from_string("-3.5+2.5i");
+        REQUIRE(f.real == Approx(-3.5f));
+        REQUIRE(f.imag == Approx(2.5f));
+    }
+
+    SECTION("Constructor from string - invalid strings") {
+        REQUIRE_THROWS(cx::from_string(""));
+        REQUIRE_THROWS(cx::from_string("abc"));     
+        REQUIRE_THROWS(cx::from_string("1 + i"));   
+        REQUIRE_THROWS(cx::from_string("1+i2"));    
+        REQUIRE_THROWS(cx::from_string("++3-2i"));  
+    }
+}

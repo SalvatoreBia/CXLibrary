@@ -4,6 +4,8 @@
 #include <ostream>
 #include <utility>
 #include <stdexcept>
+#include <string>
+#include <regex>
 
 
 struct cx
@@ -37,7 +39,11 @@ struct cx
 	cx sqrt()	   const noexcept;
 	
 	static cx from_pair(const std::pair<float, float>&) noexcept;
+	static cx from_string(const std::string&);
 	std::pair<float, float> to_polar() const noexcept;
+
+private:
+	static const std::regex __pattern__;
 };
 
 
