@@ -7,8 +7,9 @@ OBJECTS = $(SRC_DIR)/ComplexNumber.cpp $(SRC_DIR)/ComplexVector.cpp $(SRC_DIR)/C
 TESTS = $(wildcard $(TESTS_DIR)/*.cpp)
 EXECUTABLES = $(TESTS:$(TESTS_DIR)/%.cpp=$(BIN_DIR)/%)
 
-CATCH2_PATH = $(shell if [ -d /usr/include/catch2 ]; then echo /usr/include/catch2; else echo /usr/local/include/catch2; fi)
-CXXFLAGS += -I$(CATCH2_PATH)
+CATCH2_INCLUDE_DIR = $(shell whereis -b catch2 | awk '{print $$2}')
+
+CXXFLAGS += -I$(CATCH2_INCLUDE_DIR)
 
 .PHONY: all clean run-tests
 
