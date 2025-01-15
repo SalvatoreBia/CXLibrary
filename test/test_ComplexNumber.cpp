@@ -1,6 +1,8 @@
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
-#include "ComplexNumber.h"
+#include "CXLibrary.h"
+
+using namespace cx_lib;
 
 TEST_CASE("ComplexNumber constructors...", "[cx]")
 {

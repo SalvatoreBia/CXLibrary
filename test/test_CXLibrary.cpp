@@ -2,6 +2,8 @@
 #include "catch.hpp"
 #include "CXLibrary.h"
 
+using namespace cx_lib;
+
 TEST_CASE("matmul(cx_matrix, cx_matrix)...") {
     cx_matrix A = cx_matrix::get_identity(2);
     std::vector<std::vector<cx>> dataB = {
