@@ -3,31 +3,31 @@
 
 namespace cx_lib
 {
-    cx::cx(const cx &obj) noexcept : real(obj.real), imag(obj.imag) {}
+    cx::cx(const cx& obj) noexcept : real(obj.real), imag(obj.imag) {}
 
     cx::operator std::pair<float, float>() const noexcept
     {
         return {real, imag};
     }
 
-    cx cx::operator+(const cx &obj) const noexcept
+    cx cx::operator+(const cx& obj) const noexcept
     {
         return cx(real + obj.real, imag + obj.imag);
     }
 
-    cx cx::operator-(const cx &obj) const noexcept
+    cx cx::operator-(const cx& obj) const noexcept
     {
         return cx(real - obj.real, imag - obj.imag);
     }
 
-    cx cx::operator*(const cx &obj) const noexcept
+    cx cx::operator*(const cx& obj) const noexcept
     {
         return cx(
             (real * obj.real) - (imag * obj.imag),
             (real * obj.imag) + (imag * obj.real));
     }
 
-    cx cx::operator/(const cx &obj) const
+    cx cx::operator/(const cx& obj) const
     {
         if (obj.real == 0 && obj.imag == 0)
             throw std::runtime_error("Division by zero.");
@@ -38,7 +38,44 @@ namespace cx_lib
             (float)((imag * obj.real) - (real * obj.imag)) / denominator);
     }
 
-    std::ostream &operator<<(std::ostream &os, const cx &obj)
+    cx& cx::operator+=(const cx& obj) noexcept
+    {
+        real += obj.real;
+        imag += obj.imag;
+        return *this;
+    }
+
+    cx& cx::operator-=(const cx& obj) noexcept
+    {
+        real -= obj.real;
+        imag -= obj.imag;
+        return *this;
+    }
+
+    cx& cx::operator*=(const cx& obj) noexcept
+    {
+        float temp_real = (real * obj.real) - (imag * obj.imag);
+        float temp_imag = (real * obj.imag) + (imag * obj.real);
+        real = temp_real;
+        imag = temp_imag;
+        return *this;
+    }
+
+    cx& cx::operator/=(const cx& obj)
+    {
+        if (obj.real == 0 && obj.imag == 0)
+            throw std::runtime_error("Division by zero.");
+
+        float denominator = std::pow(obj.real, 2) + std::pow(obj.imag, 2);
+        float temp_real = ((real * obj.real) + (imag * obj.imag)) / denominator;
+        float temp_imag = ((imag * obj.real) - (real * obj.imag)) / denominator;
+
+        real = temp_real;
+        imag = temp_imag;
+        return *this;
+    }
+
+    std::ostream &operator<<(std::ostream &os, const cx& obj)
     {
         os << obj.real;
 
@@ -74,12 +111,12 @@ namespace cx_lib
         return cx(real, -imag);
     }
 
-    bool cx::operator==(const cx &obj) const noexcept
+    bool cx::operator==(const cx& obj) const noexcept
     {
         return real == obj.real && imag == obj.imag;
     }
 
-    bool cx::operator!=(const cx &obj) const noexcept
+    bool cx::operator!=(const cx& obj) const noexcept
     {
         return real != obj.real || imag != obj.imag;
     }
@@ -122,21 +159,23 @@ namespace cx_lib
         return s.substr(start, (end - start + 1));
     }
 
-    cx cx::from_string(const std::string& input)
+    cx cx::from_string(const std::string &input)
     {
         std::string str = trim(input);
         if (str.empty())
             throw std::invalid_argument("Can't parse an empty or all-whitespace string.");
-        
+
         std::size_t splitPos = std::string::npos;
-        for (std::size_t i = 1; i < str.size(); ++i) {
-            if (str[i] == '+' || str[i] == '-') {
+        for (std::size_t i = 1; i < str.size(); ++i)
+        {
+            if (str[i] == '+' || str[i] == '-')
+            {
                 splitPos = i;
-                break; 
+                break;
             }
         }
 
-        float r  = 0.0;
+        float r = 0.0;
         float im = 0.0;
 
         if (splitPos == std::string::npos)
@@ -151,7 +190,7 @@ namespace cx_lib
                     im = -1.0;
                 else
                     im = std::stod(body);
-                
+
                 r = 0.0;
             }
             else

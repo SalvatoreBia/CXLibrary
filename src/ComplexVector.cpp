@@ -285,4 +285,20 @@ namespace cx_lib
     {
         return this->arr;
     }
+
+    std::ostream& operator <<(std::ostream& os, const cx_vector& obj)
+    {
+        bool print_all = (obj.dim() <= 10);
+        os << "[";
+        for (size_t i = 0; i < std::min(obj.dim(), size_t(10)); i++)
+        {
+            os << obj[i];
+            if (i < obj.dim() - 1)
+                os << ", ";
+        }
+        if (!print_all)
+            os << " ...";
+        os << "]";
+        return os;
+    }
 }

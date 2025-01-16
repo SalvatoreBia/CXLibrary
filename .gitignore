@@ -1,3 +1,7 @@
 .vscode/
 test/bin/
 main.cpp
+
+docs/*
+!docs/html
+!docs/html/*

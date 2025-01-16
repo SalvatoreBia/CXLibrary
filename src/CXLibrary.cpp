@@ -4,6 +4,13 @@
 
 namespace cx_lib
 {
+    std::atomic<bool> __cx_multithread_enabled__ = false;
+
+    void enable_multithreading(bool enable) noexcept
+    {
+        __cx_multithread_enabled__ = enable;
+    }
+
     cx_matrix matmul(const cx_matrix& a, const cx_matrix& b)
     {
         if (a.cols() != b.rows())
@@ -70,6 +77,40 @@ namespace cx_lib
 
         return prod_;
     }
+
+    cx_tensor hadamard_prod(const cx_tensor& a, const cx_tensor& b)
+    {
+        if (a.shape() != b.shape())
+            throw std::invalid_argument("Shapes do not match for Hadamard product.");
+
+        cx_tensor result(a.shape(), cx(0, 0));
+
+        if (cx_lib::__cx_multithread_enabled__)
+        {
+            size_t num_threads = std::thread::hardware_concurrency();
+            size_t chunk_size = a.size() / num_threads;
+            std::vector<std::thread> threads;
+
+            for (size_t t = 0; t < num_threads; t++)
+            {
+                threads.emplace_back([&, t]() {
+                    size_t start = t * chunk_size;
+                    size_t end = (t == num_threads - 1)? a.size() : (t + 1) * chunk_size;
+                    for (size_t i = start; i < end; i++)
+                        result[i] = a[i] * b[i];
+                });
+            }
+
+            for (auto& thread : threads)
+                thread.join();
+        }
+        else
+            for (size_t i = 0; i < a.size(); i++)
+                result[i] = a[i] * b[i];
+
+        return result;
+    }
+
 
     cx_vector tensor_prod(const cx_vector& a, const cx_vector& b) noexcept
     {

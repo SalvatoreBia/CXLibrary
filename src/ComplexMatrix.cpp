@@ -2,7 +2,7 @@
 
 namespace cx_lib
 {
-    cx_matrix::cx_matrix(size_t __rows, size_t __cols, const cx &val)
+    cx_matrix::cx_matrix(size_t __rows, size_t __cols, const cx& val)
     {
         if (__rows < 2 || __cols < 2)
             throw std::invalid_argument("cx_matrix must have at least 2 rows and columns");
@@ -12,7 +12,7 @@ namespace cx_lib
             this->mat[i] = cx_vector(__cols, val);
     }
 
-    cx_matrix::cx_matrix(const std::vector<std::vector<cx>> &vec)
+    cx_matrix::cx_matrix(const std::vector<std::vector<cx>>& vec)
     {
         size_t __rows = vec.size();
         if (__rows < 2)
@@ -58,17 +58,17 @@ namespace cx_lib
             this->mat[i] = vec[i];
     }
 
-    cx_matrix::cx_matrix(const cx_matrix &obj) noexcept
+    cx_matrix::cx_matrix(const cx_matrix& obj) noexcept
     {
         this->mat = obj.mat;
     }
 
-    cx &cx_matrix::operator()(size_t __row, size_t __col) noexcept
+    cx& cx_matrix::operator()(size_t __row, size_t __col) noexcept
     {
         return this->mat[__row][__col];
     }
 
-    const cx &cx_matrix::operator()(size_t __row, size_t __col) const noexcept
+    const cx& cx_matrix::operator()(size_t __row, size_t __col) const noexcept
     {
         return this->mat[__row][__col];
     }
@@ -83,7 +83,7 @@ namespace cx_lib
         return this->mat[__index];
     }
 
-    cx &cx_matrix::at(size_t __row, size_t __col)
+    cx& cx_matrix::at(size_t __row, size_t __col)
     {
         if (( __row >= this->rows()) || (__col >= this->cols()))
             throw std::runtime_error("Index out of range.");
@@ -91,7 +91,7 @@ namespace cx_lib
         return this->mat[__row][__col];
     }
 
-    const cx &cx_matrix::at(size_t __row, size_t __col) const
+    const cx& cx_matrix::at(size_t __row, size_t __col) const
     {
         if (( __row >= this->rows()) || (__col >= this->cols()))
             throw std::runtime_error("Index out of range.");
@@ -188,5 +188,21 @@ namespace cx_lib
     std::vector<cx_vector> cx_matrix::get() noexcept
     {
         return this->mat;
+    }
+
+    std::ostream& operator <<(std::ostream& os, const cx_matrix& obj)
+    {
+        bool print_all = (obj.rows() <= 10);
+        os << "[";
+        for (size_t i = 0; i < std::min(obj.rows(), size_t(10)); i++)
+        {
+            os << obj[i];
+            if (i < obj.rows() - 1)
+                os << ",\n";
+        }
+        if (!print_all)
+            os << "...";
+        os << "]";
+        return os;
     }
 }
