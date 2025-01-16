@@ -6,7 +6,7 @@ Attualmente la libreria è composta da 3 classi:
 - `cx`: rappresentazione di un numero complesso;
 - `cx_vector`: rappresentazione di un vettore di numeri complessi;
 - `cx_matrix`: rappresentazione di una matrice di numeri complessi;
-- `cx_matrix` :  rappresentazione di un tensore di numeri complessi;
+- `cx_tensor` :  rappresentazione di un tensore di numeri complessi;
 
 Le classi contengono funzionalità basilari per gestire le operazioni più comuni associate ai numeri complessi e a spazi vettoriali complessi.
 
