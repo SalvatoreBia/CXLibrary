@@ -1,6 +1,2 @@
 .vscode/
 test/bin/
-
-docs/*
-!docs/html
-!docs/html/*
