@@ -4,11 +4,20 @@
 #include <vector>
 #include <stdexcept>
 #include <numeric>
+#include <algorithm>
 #include "CXLibrary.h"
 #include "ComplexNumber.h"
 
 namespace cx_lib
 {
+    enum __cx_comparison_criteria__
+    {
+        BY_REAL,
+        BY_IMAG,
+        BY_MOD,
+        BY_PHASE
+    };
+
     /**
      * @brief N-dimensional tensor of complex numbers
      * 
@@ -90,6 +99,13 @@ namespace cx_lib
         size_t size() const noexcept;
         /** @brief Get tensor dimensions */
         const std::vector<size_t>& shape() const noexcept;
+        /** @brief Check if tensor is empty */
+        std::vector<size_t> unravel_index(size_t) const;
+        
+        /** @brief Normalize tensor elements, according to min and max values in it */
+        void normalize(__cx_comparison_criteria__);
+        /** @brief Flatten tensor to 1D vector */
+        void flatten() noexcept;
     };
 }
 

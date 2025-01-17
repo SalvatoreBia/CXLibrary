@@ -73,6 +73,13 @@ namespace cx_lib
      * @return Result of tensor product
      */
     cx_vector tensor_prod(const cx_vector& a, const cx_vector& b) noexcept;
+
+    /** @brief Tensor (outer) product of two tensors
+     * @param a First tensor
+     * @param b Second tensor
+     * @return Result of tensor product
+     */
+    cx_tensor tensor_prod(const cx_tensor& a, const cx_tensor& b) noexcept;
 }
 
 #endif

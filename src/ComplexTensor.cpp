@@ -331,4 +331,72 @@ namespace cx_lib
         return result;
     }
 
+    std::vector<size_t> cx_tensor::unravel_index(size_t index) const
+    {
+        std::vector<size_t> multi_index(this->__shape__.size());
+        size_t remainder = index;
+
+        for (size_t i = 0; i < this->__shape__.size(); ++i) 
+        {
+            size_t stride = 1;
+            for (size_t j = i + 1; j < this->__shape__.size(); ++j)
+                stride *= this->__shape__[j];
+            
+            multi_index[i] = remainder / stride;
+            remainder %= stride;
+        }
+
+        return multi_index;
+    }
+
+    void cx_tensor::normalize(__cx_comparison_criteria__ criteria)
+    {        
+        cx min_, max_;
+        switch (criteria)
+        {
+            case BY_REAL:
+            {
+                min_ = *std::min_element(this->data.begin(), this->data.end(), 
+                                              [](const cx& a, const cx& b) { return a.real < b.real; });      
+                max_ = *std::max_element(this->data.begin(), this->data.end(), 
+                                              [](const cx& a, const cx& b) { return a.real > b.real; });      
+                break;
+            }
+            case BY_IMAG:
+            {
+                min_ = *std::min_element(this->data.begin(), this->data.end(), 
+                                              [](const cx& a, const cx& b) { return a.imag < b.imag; });      
+                max_ = *std::max_element(this->data.begin(), this->data.end(), 
+                                              [](const cx& a, const cx& b) { return a.imag > b.imag; });      
+                break;
+            }
+            case BY_MOD:
+            {
+                min_ = *std::min_element(this->data.begin(), this->data.end(), 
+                                              [](const cx& a, const cx& b) { return a.mod() < b.mod(); });      
+                max_ = *std::max_element(this->data.begin(), this->data.end(), 
+                                              [](const cx& a, const cx& b) { return a.mod() > b.mod(); });      
+                break;
+            }
+            case BY_PHASE:
+            {
+                min_ = *std::min_element(this->data.begin(), this->data.end(), 
+                                              [](const cx& a, const cx& b) { return a.phase() < b.phase(); });      
+                max_ = *std::max_element(this->data.begin(), this->data.end(), 
+                                              [](const cx& a, const cx& b) { return a.phase() > b.phase(); });      
+                break;
+            }
+            default:
+                throw std::invalid_argument("Invalid comparison criteria.");
+        }
+
+        for (size_t i = 0; i < this->size(); i++)
+            (*this)[i] = ((*this)[i] - min_) / (max_ - min_);
+    }
+
+    void cx_tensor::flatten() noexcept
+    {
+        this->__shape__ = {this->size()};
+    }
+
 }

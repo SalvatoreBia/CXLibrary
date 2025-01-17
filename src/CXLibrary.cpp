@@ -126,4 +126,26 @@ namespace cx_lib
 
         return prod_;
     }
+
+    cx_tensor tensor_prod(const cx_tensor& a, const cx_tensor& b) noexcept
+    {
+        std::vector<size_t> shape_a(a.shape());
+        std::vector<size_t> shape_b(b.shape());
+        shape_a.insert(shape_a.end(), shape_b.begin(), shape_b.end());
+        cx_tensor new_(shape_a, cx(0, 0));
+
+        for (size_t i = 0; i < a.size(); i++)
+        {
+            std::vector<size_t> idx_a = a.unravel_index(i);
+            for (size_t j = 0; j < b.size(); j++)
+            {
+                std::vector<size_t> idx_b = b.unravel_index(j);
+                std::vector<size_t> idx_new = idx_a;
+                idx_new.insert(idx_new.end(), idx_b.begin(), idx_b.end());
+                new_.at(idx_new) = a[i] * b[j];
+            }
+        }
+
+        return new_;
+    }
 }

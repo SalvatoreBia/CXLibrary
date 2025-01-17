@@ -2,7 +2,7 @@
 
 Una libreria C++ progettata per lavorare con numeri complessi.
 
-Attualmente la libreria è composta da 3 classi:
+Attualmente la libreria è composta dalle seguenti classi:
 - `cx`: rappresentazione di un numero complesso;
 - `cx_vector`: rappresentazione di un vettore di numeri complessi;
 - `cx_matrix`: rappresentazione di una matrice di numeri complessi;
